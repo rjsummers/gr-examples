@@ -32,6 +32,18 @@ options:
     state: enabled
 
 blocks:
+- name: audio_rate
+  id: variable
+  parameters:
+    comment: ''
+    value: '48000'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1400, 44.0]
+    rotation: 0
+    state: true
 - name: samp_rate
   id: variable
   parameters:
@@ -44,6 +56,64 @@ blocks:
     coordinate: [184, 12]
     rotation: 0
     state: enabled
+- name: volume
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: ''
+    label: Volume (dB)
+    min_len: '200'
+    orient: Qt.Horizontal
+    rangeType: float
+    start: '-40'
+    step: '1'
+    stop: '40'
+    value: '25'
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [472, 100.0]
+    rotation: 0
+    state: true
+- name: analog_agc_xx_0
+  id: analog_agc_xx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    gain: '1.0'
+    max_gain: '65536'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    rate: 1e-4
+    reference: '1.0'
+    type: complex
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [280, 212.0]
+    rotation: 0
+    state: bypassed
+- name: audio_sink_0
+  id: audio_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    device_name: ''
+    num_inputs: '1'
+    ok_to_block: 'True'
+    samp_rate: audio_rate
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1400, 140.0]
+    rotation: 0
+    state: true
 - name: blocks_complex_to_mag_0
   id: blocks_complex_to_mag
   parameters:
@@ -57,7 +127,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [800, 208.0]
+    coordinate: [680, 240.0]
     rotation: 0
     state: true
 - name: blocks_file_source_0
@@ -79,16 +149,16 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [176, 172.0]
+    coordinate: [8, 204.0]
     rotation: 0
     state: true
-- name: blocks_multiply_const_xx_0
-  id: blocks_multiply_const_xx
+- name: blocks_multiply_const_vxx_0
+  id: blocks_multiply_const_vxx
   parameters:
     affinity: ''
     alias: ''
     comment: ''
-    const: '1000'
+    const: 10**(volume / 10)
     maxoutbuf: '0'
     minoutbuf: '0'
     type: complex
@@ -97,26 +167,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [608, 204.0]
-    rotation: 0
-    state: true
-- name: blocks_throttle_0
-  id: blocks_throttle
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    ignoretag: 'True'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    samples_per_second: samp_rate
-    type: complex
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [424, 204.0]
+    coordinate: [472, 236.0]
     rotation: 0
     state: true
 - name: blocks_wavfile_sink_0
@@ -126,16 +177,16 @@ blocks:
     alias: ''
     bits_per_sample: '8'
     comment: ''
-    file: /home/rsummers/Documents/gr-examples/am_results
+    file: /home/rsummers/Documents/gr-examples/am_results.wav
     nchan: '1'
-    samp_rate: samp_rate
+    samp_rate: audio_rate
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1200, 188.0]
+    coordinate: [1400, 220.0]
     rotation: 0
-    state: true
+    state: enabled
 - name: low_pass_filter_0
   id: low_pass_filter
   parameters:
@@ -157,7 +208,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [992, 156.0]
+    coordinate: [904, 188.0]
     rotation: 0
     state: true
 - name: qtgui_freq_sink_x_0
@@ -178,7 +229,7 @@ blocks:
     autoscale: 'False'
     average: '1.0'
     axislabels: 'True'
-    bw: samp_rate
+    bw: audio_rate
     color1: '"blue"'
     color10: '"dark blue"'
     color2: '"red"'
@@ -237,17 +288,39 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1232, 352.0]
+    coordinate: [1400, 320.0]
+    rotation: 0
+    state: true
+- name: rational_resampler_xxx_0
+  id: rational_resampler_xxx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    decim: '8'
+    fbw: '0'
+    interp: '15'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    taps: ''
+    type: fff
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1096, 212.0]
     rotation: 0
     state: true
 
 connections:
+- [analog_agc_xx_0, '0', blocks_multiply_const_vxx_0, '0']
 - [blocks_complex_to_mag_0, '0', low_pass_filter_0, '0']
-- [blocks_file_source_0, '0', blocks_throttle_0, '0']
-- [blocks_multiply_const_xx_0, '0', blocks_complex_to_mag_0, '0']
-- [blocks_throttle_0, '0', blocks_multiply_const_xx_0, '0']
-- [low_pass_filter_0, '0', blocks_wavfile_sink_0, '0']
-- [low_pass_filter_0, '0', qtgui_freq_sink_x_0, '0']
+- [blocks_file_source_0, '0', analog_agc_xx_0, '0']
+- [blocks_multiply_const_vxx_0, '0', blocks_complex_to_mag_0, '0']
+- [low_pass_filter_0, '0', rational_resampler_xxx_0, '0']
+- [rational_resampler_xxx_0, '0', audio_sink_0, '0']
+- [rational_resampler_xxx_0, '0', blocks_wavfile_sink_0, '0']
+- [rational_resampler_xxx_0, '0', qtgui_freq_sink_x_0, '0']
 
 metadata:
   file_format: 1
