@@ -44,6 +44,27 @@ blocks:
     coordinate: [184, 12]
     rotation: 0
     state: enabled
+- name: volume
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: ''
+    label: Volume
+    min_len: '200'
+    orient: Qt.Horizontal
+    rangeType: float
+    start: '0'
+    step: '1'
+    stop: '100'
+    value: '50'
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1072, 100.0]
+    rotation: 0
+    state: true
 - name: analog_fm_deemph_0
   id: analog_fm_deemph
   parameters:
@@ -58,7 +79,24 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1080, 228.0]
+    coordinate: [880, 228.0]
+    rotation: 0
+    state: true
+- name: audio_sink_0
+  id: audio_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    device_name: ''
+    num_inputs: '1'
+    ok_to_block: 'True'
+    samp_rate: int(samp_rate * 15 / 80)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1520, 140.0]
     rotation: 0
     state: true
 - name: blocks_complex_to_arg_0
@@ -74,7 +112,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [864, 240.0]
+    coordinate: [656, 240.0]
     rotation: 0
     state: true
 - name: blocks_delay_0
@@ -93,7 +131,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [480, 268.0]
+    coordinate: [272, 268.0]
     rotation: 0
     state: true
 - name: blocks_file_source_0
@@ -131,26 +169,25 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [648, 224.0]
+    coordinate: [448, 224.0]
     rotation: 0
     state: true
-- name: blocks_throttle_0
-  id: blocks_throttle
+- name: blocks_multiply_const_xx_0
+  id: blocks_multiply_const_xx
   parameters:
     affinity: ''
     alias: ''
     comment: ''
-    ignoretag: 'True'
+    const: volume / 100 / 3.141592
     maxoutbuf: '0'
     minoutbuf: '0'
-    samples_per_second: samp_rate
-    type: complex
+    type: float
     vlen: '1'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [264, 220.0]
+    coordinate: [1088, 236.0]
     rotation: 0
     state: true
 - name: blocks_wavfile_sink_0
@@ -160,14 +197,14 @@ blocks:
     alias: ''
     bits_per_sample: '8'
     comment: ''
-    file: /home/rsummers/Documents/gr-examples/fm_results
+    file: /home/rsummers/Documents/gr-examples/fm_results.wav
     nchan: '1'
-    samp_rate: int(samp_rate / 5)
+    samp_rate: int(samp_rate * 15 / 80)
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1544, 220.0]
+    coordinate: [1520, 220.0]
     rotation: 0
     state: true
 - name: rational_resampler_xxx_0
@@ -176,9 +213,9 @@ blocks:
     affinity: ''
     alias: ''
     comment: ''
-    decim: '5'
+    decim: '80'
     fbw: '0'
-    interp: '1'
+    interp: '15'
     maxoutbuf: '0'
     minoutbuf: '0'
     taps: ''
@@ -187,18 +224,19 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1320, 212.0]
+    coordinate: [1296, 212.0]
     rotation: 0
     state: true
 
 connections:
-- [analog_fm_deemph_0, '0', rational_resampler_xxx_0, '0']
+- [analog_fm_deemph_0, '0', blocks_multiply_const_xx_0, '0']
 - [blocks_complex_to_arg_0, '0', analog_fm_deemph_0, '0']
 - [blocks_delay_0, '0', blocks_multiply_conjugate_cc_0, '1']
-- [blocks_file_source_0, '0', blocks_throttle_0, '0']
+- [blocks_file_source_0, '0', blocks_delay_0, '0']
+- [blocks_file_source_0, '0', blocks_multiply_conjugate_cc_0, '0']
 - [blocks_multiply_conjugate_cc_0, '0', blocks_complex_to_arg_0, '0']
-- [blocks_throttle_0, '0', blocks_delay_0, '0']
-- [blocks_throttle_0, '0', blocks_multiply_conjugate_cc_0, '0']
+- [blocks_multiply_const_xx_0, '0', rational_resampler_xxx_0, '0']
+- [rational_resampler_xxx_0, '0', audio_sink_0, '0']
 - [rational_resampler_xxx_0, '0', blocks_wavfile_sink_0, '0']
 
 metadata:
