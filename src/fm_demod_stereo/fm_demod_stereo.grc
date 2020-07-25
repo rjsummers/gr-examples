@@ -323,7 +323,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1176, 1040.0]
+    coordinate: [1192, 1040.0]
     rotation: 0
     state: true
 - name: blocks_complex_to_imag_0
@@ -593,7 +593,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [832, 860.0]
+    coordinate: [824, 860.0]
     rotation: 0
     state: true
 - name: fir_filter_xxx_1_0_2
@@ -732,7 +732,7 @@ blocks:
     marker9: '0'
     name: '""'
     nconnections: '1'
-    size: '1024'
+    size: int(samp_rate * 0.10)
     style1: '0'
     style10: '0'
     style2: '0'
@@ -763,7 +763,7 @@ blocks:
     xmax: '2'
     xmin: '-2'
     ymax: '2'
-    ymin: '-2'
+    ymin: '2'
   states:
     bus_sink: false
     bus_source: false
@@ -800,7 +800,7 @@ blocks:
     color9: dark green
     comment: ''
     ctrlpanel: 'False'
-    entags: 'True'
+    entags: 'False'
     grid: 'False'
     gui_hint: ''
     label1: Signal 1
@@ -826,7 +826,7 @@ blocks:
     marker9: '-1'
     name: '""'
     nconnections: '1'
-    size: '1024'
+    size: int(samp_rate * 0.10)
     srate: samp_rate
     stemplot: 'False'
     style1: '1'
